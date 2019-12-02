@@ -13,6 +13,36 @@ app.get("/burgers", (req, res) => {
   res.send("We have juicy cheese burgers!");
 });
 
+app.get("/cipher", (req, res) => {
+  const rotx = (str, x, decrypt = false) => {
+    let ccArr = [],
+      limits = { upper: [97, 122], lower: [65, 90] },
+      charCode;
+  
+    if (decrypt) x *= -1;
+  
+    x = x % 26;
+  
+    for (let i = 0; i < str.length; i++) {
+      charCode = str.charCodeAt(i);
+  
+      if (charCode >= limits.lower[0] && charCode <= limits.lower[1]) {
+        ccArr[i] = ((charCode - limits.upper[0] + x) % 26) + limits.upper[0];
+      } else if (charCode >= limits.upper[0] && charCode <= limits.upper[1]) {
+        ccArr[i] = ((charCode - limits.upper[0] + x) % 26) + limits.upper[0];
+      } else {
+        ccArr[i] = charCode;
+      }
+    }
+    return String.fromCharCode(...ccArr);
+  };
+  
+  const text = req.query.text;
+  const shift = req.query.shift;
+  const result = rotx(text, shift);
+  res.send(result);
+}); 
+
 app.get("/echo", (req, res) => {
   const responseText = `Here are some details of your request:
     Base URL: ${req.baseUrl}
